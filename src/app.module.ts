@@ -1,3 +1,4 @@
+import { HealthModule } from './modules/health/health.module';
 import { BatchModule } from './modules/batch/batch.module';
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
@@ -15,8 +16,6 @@ import configuration from "./config/config";
 
 @Module({
   imports: [
-    BatchModule,
-    BatchModule,
     ConfigModule.forRoot({
       cache: true,
       isGlobal: true,
@@ -28,6 +27,7 @@ import configuration from "./config/config";
     BoardModule,
     UsersModule,
     BatchModule,
+    HealthModule,
     ScheduleModule.forRoot()
   ],
   controllers: [AppController],

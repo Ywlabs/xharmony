@@ -1,6 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Roles } from '../decorator/roles.decorator';
 import { Users } from '../../modules/users/entities/users.entity';
 
 

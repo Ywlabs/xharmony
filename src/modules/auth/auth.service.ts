@@ -38,7 +38,7 @@ export class AuthService {
       email: user.email,
       auths: []
     }
-    //사용자 권한 테이블이랑 매핑하여 처리 
+    //사용자 정보 기반으로 권한 ROLE 정보 배치 
     this.convertInAuthorities(user);
     
     const access_token = await this.generateToken(payload);
@@ -70,8 +70,7 @@ export class AuthService {
       email: user.email,
       auths: []
     }
-
-    //사용자 권한 테이블이랑 매핑하여 처리 
+    //사용자 정보 기반으로 권한 ROLE 정보 배치 
     this.convertInAuthorities(user);
     
     const access_token = await this.generateToken(payload);

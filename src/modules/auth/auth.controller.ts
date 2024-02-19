@@ -7,11 +7,14 @@ import { RefreshGuard } from 'src/common/guard/refresh.guard';
 import { ConfigService } from "@nestjs/config";
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { RolesGuard } from 'src/common/guard/role.guard';
-import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
 import { RoleType } from 'src/common/enum/roles.enum';
 
-/* 테스트*/
-
+/**
+ * *인증컨트롤러 
+ * TODO : 1.CQRS 패턴 적용해보기 (2월) 
+ * TODO : 2.MICRO SERVER 패턴 적용해보기 (2월) 
+ * 
+ */
 @Controller('auth')
 export class AuthController {
     private readonly logger = new Logger(AuthController.name);
@@ -25,7 +28,7 @@ export class AuthController {
     @Post('login')
     async login(@Body() dto: LoginUserDto, @Res() res: Response): Promise<any> {
       const token =  await this.authService.login(dto);
-      //Bearer 토큰 생성 
+      //Bearer 토큰으로 생성함
       res.setHeader('Authorization', 'Bearer '+ token.access_token);
       res.cookie('refresh_token', token.refresh_token, {httpOnly: true,domain: 'localhost',path: '/',maxAge:Number(this.config.get('JWT_REFRESH_MS')) * 1000});
       return res.json(token);      
