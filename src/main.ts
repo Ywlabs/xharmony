@@ -6,15 +6,27 @@ import { LoggingInterceptor } from './common/interceptor/logging.interceptor';
 import { ClassSerializerInterceptor, ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from "@nestjs/config";
 import * as cookieParser from 'cookie-parser';
+import { existsSync, mkdirSync } from 'fs';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
+import express from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, 
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, 
     {
       bufferLogs: true,
       logger: winstonLogger, // replacing logger
     }
   );
 
+ 
+  //업로드 폴더 생성
+  const uploadPath = 'uploads';
+  if (!existsSync(uploadPath)) {
+    // uploads 폴더가 존재하지 않을시, 생성합니다.
+    mkdirSync(uploadPath);
+  }
+  
   const configService = app.get(ConfigService);
   /* White List 방식 
   var whitelist = ['https://website.com', 'https://www.website.com'];
@@ -39,6 +51,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
     exposedHeaders: ['Authorization'], // * 사용할 헤더 추가.
+    optionsSuccessStatus: 200,
   });
     
   app.useGlobalFilters(new GlobalExceptionFilter());

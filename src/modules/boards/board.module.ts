@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { BadRequestException, Module } from '@nestjs/common';
 
 import { BoardController } from './board.controller';
 import { BoardService } from './board.service';
@@ -7,7 +7,7 @@ import { CustomRepositoryModule } from 'nestjs-typeorm-custom-repository';
 
 @Module({
   imports: [
-    CustomRepositoryModule.forFeature([BoardRepository])
+    CustomRepositoryModule.forFeature([BoardRepository]),
   ],
   controllers: [BoardController],
   providers: [BoardService],

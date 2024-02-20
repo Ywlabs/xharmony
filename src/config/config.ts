@@ -22,6 +22,10 @@ export default () => ({
     refresh_key : process.env.JWT_REFRESH_KEY,
     refresh_ms : process.env.JWT_REFRESH_MS
   },
+  upload : {
+    file_folder : process.env.UPLOAD_FILE_FOLDER,
+    url_path : process.env.UPLOAD_URL_PATH,
+  },
   comm : {
     reqtimeout : parseInt(process.env.COMM_REQ_TIMEOUT, 10) || 30000,
   }

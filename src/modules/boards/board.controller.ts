@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, UseFilters, ParseIntPipe, UseGuards, Version, VERSION_NEUTRAL } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseFilters, ParseIntPipe, UseGuards, Version, VERSION_NEUTRAL, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { BoardService } from './board.service';
 import { Board } from './entities/board.entity';
 import { CustomException } from 'src/common/exception/custom.exception';
@@ -6,6 +6,7 @@ import { PaginationRequest } from 'src/common/pagination/pagination.request';
 import { GetPagination } from 'src/common/decorator/pagination.decorator';
 import { CreateBoardDto, UpdateBoardDto } from './dto/board.dto';
 import { AccessGuard } from '../../common/guard/access.guard';
+import { FileInterceptor } from '@nestjs/platform-express/multer';
 
 @Controller({ path: "board", version: "1" })
 @UseGuards(AccessGuard)
@@ -18,6 +19,8 @@ export class BoardController {
   async create(@Body() dto: CreateBoardDto) {
     return this.BoardService.create(dto);
   }
+  
+ 
 
   @Get()
 	async list(@GetPagination() pagenation: PaginationRequest) {
