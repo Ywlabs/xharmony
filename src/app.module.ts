@@ -1,3 +1,4 @@
+import { KafkaModule } from './modules/kafka/kafka.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { HealthModule } from './modules/health/health.module';
 import { BatchModule } from './modules/batch/batch.module';
@@ -15,10 +16,11 @@ import { ConfigModule } from "@nestjs/config";
 import configuration from "./config/config";
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import {ClientsModule, Transport} from '@nestjs/microservices';
+
 
 @Module({
   imports: [
-    UploadModule,
     ConfigModule.forRoot({
       cache: true,
       isGlobal: true,
@@ -26,12 +28,6 @@ import { join } from 'path';
       load: [configuration],
     }),
     TypeOrmModule.forRootAsync(CrmConfig),
-    AuthModule,
-    BoardModule,
-    UsersModule,
-    BatchModule,
-    HealthModule,
-    UploadModule,
     //배치모듈에 대한 글로벌 옵션 지정 
     ScheduleModule.forRoot(),
     //현재폴더기준으로 경로찿기 
@@ -42,6 +38,13 @@ import { join } from 'path';
       exclude: ['/api*'],
       serveStaticOptions: { index: false, redirect: false },
     }),
+    AuthModule,
+    BoardModule,
+    UsersModule,
+    BatchModule,
+    HealthModule,
+    UploadModule,
+    KafkaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

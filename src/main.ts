@@ -3,13 +3,15 @@ import { AppModule } from './app.module';
 import { winstonLogger } from './config/wiston/winston.config';
 import { GlobalExceptionFilter } from './common/filter/all-exception.filter';
 import { LoggingInterceptor } from './common/interceptor/logging.interceptor';
-import { ClassSerializerInterceptor, ValidationPipe, VersioningType } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from "@nestjs/config";
 import * as cookieParser from 'cookie-parser';
 import { existsSync, mkdirSync } from 'fs';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
 import express from 'express';
+import {Transport} from '@nestjs/microservices';
+import { v4 as uuidv4 } from 'uuid';
+
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, 
@@ -18,7 +20,6 @@ async function bootstrap() {
       logger: winstonLogger, // replacing logger
     }
   );
-
  
   //업로드 폴더 생성
   const uploadPath = 'uploads';
@@ -45,6 +46,24 @@ async function bootstrap() {
   credentials: true,
   });
   */
+  //KAFKA 서버 Connection
+  app.connectMicroservice(
+    {
+      name : process.env.KAFKA_INAME,
+      transport : Transport.KAFKA,
+      options : {
+        client : {
+          clientId: `consumer1-${uuidv4()}`,
+          brokers : [process.env.KAFKA_HOST]
+        },
+        consumer : {
+          groupId : "test-group",
+          sessionTimeout: 90000, // large enough to fit any message being processed
+          heartbeatInterval: 30000 // 1/3 of the session timeout
+       }
+      }
+    }
+  );
   //CORS 설정 
   app.enableCors({
     origin: true,
@@ -65,6 +84,9 @@ async function bootstrap() {
   app.use(cookieParser());
 
   //app.useGlobalFilters(new HttpExceptionFilter()); 
-  await app.listen(configService.get<number>("PORT", 3000));
+  //마이크로서버 실행
+  await app.startAllMicroservices();
+  //api서버 실행
+  await app.listen(configService.get<number>("app.port", 3000));
 }
 bootstrap();

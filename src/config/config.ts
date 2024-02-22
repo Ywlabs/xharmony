@@ -27,6 +27,10 @@ export default () => ({
     url_path : process.env.UPLOAD_URL_PATH,
   },
   comm : {
-    reqtimeout : parseInt(process.env.COMM_REQ_TIMEOUT, 10) || 30000,
+    reqtimeout : parseInt(process.env.COMM_REQ_TIMEOUT, 10) || 30001,
+  },
+  kafka : {
+    host : process.env.KAFKA_HOST,
+    iname : process.env.KAFKA_INAME
   }
 });
