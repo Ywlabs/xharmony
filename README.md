@@ -24,7 +24,7 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+영우랩스 기술연구소  NestJS MVC기반 프레임워크 
 
 ## Installation
 
