@@ -1,30 +1,24 @@
-import { Controller, Get, Inject } from '@nestjs/common';
-import { EachMessagePayload, Kafka } from 'kafkajs';
-import { v4 as uuidv4 } from 'uuid';
+/*
+https://docs.nestjs.com/controllers#controllers
+*/
 
+import { Body, Controller, Post } from '@nestjs/common';
+import { KafkaService } from './kafka.service';
 
-@Controller({ path: "kafka", version: "1" })
+@Controller('kafka')
 export class KafkaController { 
-    /*카프카 접속 진행*/
-    private kafka = new Kafka({
-        clientId: "cumsumer1_"+uuidv4(),
-        brokers: ['1.233.71.51:19092'],
-    })
-    //프로듀서
-    private producer = this.kafka.producer();
-    
-    constructor(){
-        this.producer.connect();//접속
-    }
 
-    @Get("/test")
-    async sendMsg(){
-        await this.producer.send({
-            topic: 'test-topic',
-            messages: [
-                { key: 'key1', value: 'hello world', partition: 0 },
-                { key: 'key2', value: 'hey hey!', partition: 1 }
-            ],
-        });
+    constructor(private readonly kafka: KafkaService) {}
+
+    //꼴랑 이거 하나 추가
+    @Post('topic')
+    async addSubscriptionTopic(@Body('topic') topic: string): Promise<string> {
+      console.log(topic);
+      if (topic == undefined) {
+        return 'topic is undefined';
+      } else {
+        await this.kafka.pubTestTopic(topic);
+        return `topic ${topic} added`;
+      }
     }
 }

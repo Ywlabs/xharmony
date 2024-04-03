@@ -31,6 +31,7 @@ export default () => ({
   },
   kafka : {
     host : process.env.KAFKA_HOST,
-    iname : process.env.KAFKA_INAME
+    iname : process.env.KAFKA_INAME,
+    group : process.env.KAFKA_GROUP,
   }
 });

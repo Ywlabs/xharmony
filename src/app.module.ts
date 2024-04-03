@@ -16,7 +16,7 @@ import { ConfigModule } from "@nestjs/config";
 import configuration from "./config/config";
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import {ClientsModule, Transport} from '@nestjs/microservices';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 
 @Module({

@@ -5,6 +5,7 @@ import {
 } from '../pagination/pagination.request';
 
 /*
+* 플러그인 어노테이션
  * @GetPagination() is a decorator that returns a PagenationRequest object.
  * @GetPagination() pagination: PaginationRequest
  */

@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
 
+/*배치서비스 구현부*/
+
 @Injectable()
 export class BatchService { 
 
@@ -27,7 +29,7 @@ export class BatchService {
       await queryRunner.startTransaction();
       
       try {
-        const usersWithExpiredTokens = await queryRunner.query("SELECT * FROM users WHERE refresh_token_dt in $1", [yyyymmdd]);
+        const usersWithExpiredTokens = await queryRunner.query("SELECT * FROM users WHERE refresh_token_dt in ($1)", [yyyymmdd]);
         for (const users of usersWithExpiredTokens) {
           if (users.refresh_token_dt) {
             await queryRunner.query("UPDATE users SET refresh_token_dt=null,  refresh_token = null WHERE userid = $1", [users.userid]);
