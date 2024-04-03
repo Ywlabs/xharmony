@@ -24,7 +24,7 @@
 
 ## Description
 
-영우랩스 기술연구소  NestJS MVC기반 프레임워크 
+영우랩스 기술연구소  NestJS 기본 프레임워크 - 지속 강화중
 
 ## Installation
 
