@@ -47,7 +47,7 @@ async function bootstrap() {
   });
   */
   //KAFKA 서버 Connection
-  app.connectMicroservice(
+  /*app.connectMicroservice(
     {
       name : process.env.KAFKA_INAME,
       transport : Transport.KAFKA,
@@ -63,7 +63,7 @@ async function bootstrap() {
        }
       }
     }
-  );
+  );*/
   //CORS 설정 
   app.enableCors({
     origin: true,
