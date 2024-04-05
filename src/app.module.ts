@@ -1,3 +1,4 @@
+import { SensorModule } from './modules/sensor/sensor.module';
 import { KafkaModule } from './modules/kafka/kafka.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { HealthModule } from './modules/health/health.module';
@@ -16,11 +17,11 @@ import { ConfigModule } from "@nestjs/config";
 import configuration from "./config/config";
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 
 
 @Module({
   imports: [
+    SensorModule,
     ConfigModule.forRoot({
       cache: true,
       isGlobal: true,
@@ -45,6 +46,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     HealthModule,
     UploadModule,
     KafkaModule,
+    SensorModule
   ],
   controllers: [AppController],
   providers: [AppService],
