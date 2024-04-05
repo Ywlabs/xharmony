@@ -24,7 +24,23 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+영우랩스 기술연구소  NestJS 백앤드 기본 프레임워크 - 지속 강화중
+
+주요샘플코드 제공영역  
+  - NESTJS 기본 구조 적용
+  - DTO 커스텀 확장
+  - 메시징 서버 (Kafka) : 기본 구조 적용
+  - 배치 기능 기본 구조 적용
+  - TypeORM 기능 연계 (Postgres 기반)
+  - 게시판 페이징/파일 업로드 가드
+  - 인증 JWT 기능개발 적용 (권한인증, Role 기반인증)
+
+
+확장예정 
+  - CQRS 패턴 적용 패턴 코드 모듈 개발 적용
+  - 응답 전문 정리 및 표준화 처리
+  - 기타 공통 코드 컴포넌트화 개발
+  - Swagger API Doc 라이브러리 적용 
 
 ## Installation
 
@@ -64,9 +80,8 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- Author - [Masasiki Jason - By Ywlabs R&D)
+- Website - [ywlabs.com]
 
 ## License
 
