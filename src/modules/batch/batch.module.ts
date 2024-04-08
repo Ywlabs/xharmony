@@ -1,5 +1,6 @@
 import { KafkaModule} from '../kafka/kafka.module';
 import { KafkaService} from '../kafka/kafka.service';
+import { MqttService } from '../mqtt/mqtt.service';
 import { BatchService } from './batch.service';
 /*
 https://docs.nestjs.com/modules
@@ -11,6 +12,6 @@ import { Module } from '@nestjs/common';
 @Module({
     imports : [KafkaModule],
     exports:[BatchService],
-    providers: [BatchService, KafkaService],
+    providers: [BatchService, KafkaService, MqttService],
 })
 export class BatchModule { }

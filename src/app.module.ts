@@ -1,3 +1,4 @@
+import { MqttModule } from './modules/mqtt/mqtt.module';
 import { SensorModule } from './modules/sensor/sensor.module';
 import { KafkaModule } from './modules/kafka/kafka.module';
 import { UploadModule } from './modules/upload/upload.module';
@@ -21,6 +22,8 @@ import { join } from 'path';
 
 @Module({
   imports: [
+    MqttModule,
+    MqttModule,
     SensorModule,
     ConfigModule.forRoot({
       cache: true,

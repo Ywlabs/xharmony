@@ -33,5 +33,10 @@ export default () => ({
     host : process.env.KAFKA_HOST,
     iname : process.env.KAFKA_INAME,
     group : process.env.KAFKA_GROUP,
+  },
+  mqtt : {
+    host : process.env.MQTT_HOST,
+    username : process.env.MQTT_USERNAME,
+    password : process.env.MQTT_PASSWORD,
   }
 });

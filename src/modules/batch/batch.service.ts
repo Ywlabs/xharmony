@@ -2,6 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
 import { KafkaService } from '../kafka/kafka.service';
+import { MqttService } from '../mqtt/mqtt.service';
 
 /*배치서비스 구현부*/
 
@@ -12,7 +13,7 @@ export class BatchService {
 
     constructor(
       private readonly dataSource: DataSource,
-      private readonly kafka: KafkaService
+      private readonly mqtt: MqttService
     ){}
 
     private getNow() {
@@ -127,6 +128,6 @@ export class BatchService {
         await queryRunner.release();
       }
       //카프카 서버한테 전달 해준다. 
-      await this.kafka.pubTestTopic({evtid : '01', msg : this.getNow() +" 수집", result : blnResult});
+      await this.mqtt.pubTestTopic({evtid : '01', msg : this.getNow() +" 수집", result : blnResult});
     }
 }
