@@ -154,7 +154,7 @@ export class BatchService {
           let { data } = await firstValueFrom(
             this.httpService.get(apiHost,{params}).pipe(
               catchError(async (error: AxiosError) => {
-                throw new Error("API Call Error");
+                throw new Error("API Call Error"+error.code);
               }),
             ),
           );
@@ -181,7 +181,14 @@ export class BatchService {
                 '${obj.dissRiskXpln}',
                 now(),
                 now()
-              )`);  
+              )ON CONFLICT (dissCd, dt,znCd,lowrnkZnCd) 
+                DO UPDATE
+                SET 
+                  cnt = '${obj.cnt}',
+                  risk = '${obj.risk}',
+                  dissRiskXpln = '${obj.dissRiskXpln}',
+                  update_date = now()
+              `);  
           });
         });
         await queryRunner.commitTransaction();
