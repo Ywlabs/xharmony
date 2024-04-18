@@ -12,11 +12,11 @@ export class MqttService {
 
     private readonly logger = new Logger(MqttService.name);
 
-    private client = connect(this.config.get('MQTT_HOST'),{
+    private options = {
         username: this.config.get('MQTT_USERNAME'),
         password: this.config.get('MQTT_PASSWORD')
-    });
-
+    };
+    private client = connect(this.config.get('MQTT_HOST'),this.options);
     private topic_id = "test-topic";
 
     constructor(

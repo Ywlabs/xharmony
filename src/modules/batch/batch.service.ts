@@ -1,8 +1,11 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
 import { KafkaService } from '../kafka/kafka.service';
 import { MqttService } from '../mqtt/mqtt.service';
+import { HttpService } from '@nestjs/axios';
+import { catchError, firstValueFrom } from 'rxjs';
+import { AxiosError } from 'axios';
 
 /*배치서비스 구현부*/
 
@@ -13,7 +16,9 @@ export class BatchService {
 
     constructor(
       private readonly dataSource: DataSource,
-      private readonly mqtt: MqttService
+      private readonly mqtt: MqttService,
+      private readonly httpService: HttpService,
+      
     ){}
 
     private getNow() {
@@ -31,7 +36,6 @@ export class BatchService {
       this.logger.debug('만료된 deleteExpiredRefreshToken 정리 작업 진행 : EVERY_6_HOURS');
       var yyyymmdd = this.getNow();
 
-
       const queryRunner = this.dataSource.createQueryRunner();
       await queryRunner.connect();
       await queryRunner.startTransaction();
@@ -46,20 +50,15 @@ export class BatchService {
         await queryRunner.commitTransaction();
       }catch{
         await queryRunner.rollbackTransaction();
-      }finally{
-        await queryRunner.release();
+        throw new Error("API DB Insert Error");
       }
     }
 
     // 프로그램 배치 돌릴때 사용하는 방식 (QueryRunner 객체를 활용 및 트랜젝션 관리)
     @Cron(CronExpression.EVERY_MINUTE,{}) 
-    async insertSensorData() {
+    async setRandomSensorData() {
   
       this.logger.debug('센싱데이터 배치시작: insertSensorData : EVERY_MINUTE');
-      
-
-      let blnResult = true;
-
       const queryRunner = this.dataSource.createQueryRunner();
       await queryRunner.connect();
       await queryRunner.startTransaction();
@@ -117,17 +116,78 @@ export class BatchService {
                     now(),
                     now()
                   from sensor
-                  `);
-          
-        await queryRunner.commitTransaction();
+        `);
 
+        await queryRunner.commitTransaction();
       }catch{
-        blnResult = false;
         await queryRunner.rollbackTransaction();
-      }finally{
-        await queryRunner.release();
+        throw new Error("API DB Insert Error");
       }
       //카프카 서버한테 전달 해준다. 
-      await this.mqtt.pubTestTopic({evtid : '01', msg : this.getNow() +" 수집", result : blnResult});
+      await this.mqtt.pubTestTopic({evtid : '01', msg : this.getNow() +" 수집", result : "success"});
     }
+
+
+    // 예측진료정보조회서비스
+    @Cron(CronExpression.EVERY_5_MINUTES,{}) 
+    async setDissForecastInfoSvc() {
+      /*const headersRequest = {
+        'Content-Type': 'application/json', // afaik this one is not needed
+        'Authorization': `Basic ${encodeToken}`,
+      };*/
+
+      this.logger.debug('예측진료정보조회서비스: setDissForecastInfoSvc : EVERY_10_HOURS');      
+      const apiHost  = "http://apis.data.go.kr/B550928/dissForecastInfoSvc/getDissForecastInfo";
+      const serviceKey  = "OagSc9ZABwn2cuw5Z6Si/KowFuFO6Zdz2CvRkSuWJp7YG59eCFyeMhHga88rgdmzOvZM5FWFxtaJZ5JEjTBPZA==";
+      const numOfRows  = "1000";
+      const dissCd  = {1 : "감기",2 : "눈병",3 : "식중독",4 : "천식",5 : "피부염",15 : "심뇌혈관 질환"}; 
+      const pageNo  = "1";
+      const type  = "json";
+      const znCd  = "11";
+      //STEP#1 : 
+      const queryRunner = this.dataSource.createQueryRunner();
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      try{
+        Object.keys(dissCd).forEach(async key => {
+          let params = {serviceKey:serviceKey,numOfRows:numOfRows,pageNo:pageNo,dissCd:key,type:type,znCd:znCd};
+          let { data } = await firstValueFrom(
+            this.httpService.get(apiHost,{params}).pipe(
+              catchError(async (error: AxiosError) => {
+                throw new Error("API Call Error");
+              }),
+            ),
+          );
+          data.response.body.items.forEach(async (obj)=>{    
+            await queryRunner.query(`       
+              insert into diss_data 
+              (
+                dissCd ,
+                dt,
+                znCd,
+                lowrnkZnCd,
+                cnt,
+                risk,
+                dissRiskXpln,
+                create_date,
+                update_date
+              )values(
+                '${obj.dissCd}',
+                '${obj.dt}',
+                '${obj.znCd}',
+                '${obj.lowrnkZnCd}',
+                '${obj.cnt}',
+                '${obj.risk}',
+                '${obj.dissRiskXpln}',
+                now(),
+                now()
+              )`);  
+          });
+        });
+        await queryRunner.commitTransaction();
+      }catch(e){
+        await queryRunner.rollbackTransaction();
+        throw new Error("API DB Insert Error");
+      }
+  }
 }

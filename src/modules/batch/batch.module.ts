@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { KafkaModule} from '../kafka/kafka.module';
 import { KafkaService} from '../kafka/kafka.service';
 import { MqttService } from '../mqtt/mqtt.service';
@@ -10,7 +11,7 @@ https://docs.nestjs.com/modules
 import { Module } from '@nestjs/common';
 
 @Module({
-    imports : [KafkaModule],
+    imports : [KafkaModule, HttpModule],
     exports:[BatchService],
     providers: [BatchService, KafkaService, MqttService],
 })
